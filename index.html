@@ -1,42 +1,51 @@
 <!DOCTYPE html><html lang="en" class> <head><meta charset="utf-8"><link rel="icon" type="image/png" href="https://thibaults-groovy-site-af44b6.webflow.io/favicon.ico"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v5.13.5"><title>Market Bets</title><link rel="stylesheet" href="https://21ec25b6-1759-48f6-8405-3390f5bcf589.wf-app-prod.cosmic.webflow.services/market-bets/_astro/index.DiRS6Ng1.css"></head> <!-- Dark mode class injection point - will be replaced with `dark` class based on your site palette --> <body class="__DARK_MODE_CLASS__">  <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).only=e;window.dispatchEvent(new Event("astro:only"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="4fW0e" component-url="https://21ec25b6-1759-48f6-8405-3390f5bcf589.wf-app-prod.cosmic.webflow.services/market-bets/_astro/TradingApp.Dv9LN9CI.js" component-export="default" renderer-url="https://21ec25b6-1759-48f6-8405-3390f5bcf589.wf-app-prod.cosmic.webflow.services/market-bets/_astro/client.B-7Sgvju.js" props="{}" ssr client="only" opts="{&quot;name&quot;:&quot;TradingApp&quot;,&quot;value&quot;:&quot;react&quot;}"></astro-island> <script>
-async function updateAllMarketPrices() {
+async function updateMarketWithDesign() {
     const API_URL = "https://api-yfinance.onrender.com/prix";
 
     try {
         const response = await fetch(API_URL);
         const data = await response.json();
         
-        // On cible uniquement les blocs qui contiennent les lignes d'actions
-        // pour éviter de scanner toute la page inutilement
-        const allDivs = document.querySelectorAll('div');
+        // On cible les lignes d'actions
+        const allRows = document.querySelectorAll('div');
 
-        allDivs.forEach(container => {
-            // On cherche le nom de l'action à l'intérieur de la div
+        allRows.forEach(row => {
+            const rowText = row.innerText.toUpperCase();
+            
             for (const [stockName, stockPrice] of Object.entries(data)) {
-                if (container.innerText.toUpperCase().includes(stockName)) {
+                // Si on trouve le nom de l'action dans cette ligne
+                if (rowText.includes(stockName)) {
                     
-                    // Sécurité : on n'affiche le prix que s'il est réaliste
-                    if (stockPrice > 0 && stockPrice < 10000) {
-                        // On cherche l'élément qui contient le prix (souvent le dernier span ou div)
-                        const priceTarget = container.querySelector('span:last-child, .price-value');
+                    // On cherche l'élément spécifique du prix
+                    // On cible souvent un span qui contient déjà un symbole € ou $
+                    const priceElements = row.querySelectorAll('span, div, p');
+                    
+                    priceElements.forEach(el => {
+                        // Si l'élément contient un chiffre et n'est pas le nom de l'action
+                        const hasCurrency = el.innerText.includes('€') || el.innerText.includes('$');
+                        const isNotName = el.innerText.toUpperCase() !== stockName;
                         
-                        if (priceTarget && priceTarget.innerText !== stockName) {
-                            priceTarget.innerText = stockPrice.toLocaleString('fr-FR') + " €";
-                            priceTarget.style.color = "#39FF14"; // Vert néon
+                        if (hasCurrency && isNotName && stockPrice > 0 && stockPrice < 10000) {
+                            // On garde l'ancien prix pour voir si ça monte ou descend (optionnel)
+                            const oldPriceText = el.innerText;
+                            
+                            // On remplace juste la valeur numérique en gardant le symbole
+                            el.innerText = stockPrice.toLocaleString('fr-FR') + " €";
+                            
+                            // On applique une couleur subtile au lieu du gros vert néon
+                            el.style.color = "#39FF14"; 
                         }
-                    }
+                    });
                 }
             }
         });
-        console.log("Mise à jour effectuée avec succès.");
     } catch (e) {
-        console.error("Erreur API :", e);
+        console.error("Erreur de synchro :", e);
     }
 }
 
-// Lancement au démarrage et toutes les 15 secondes
 window.addEventListener('load', () => {
-    setTimeout(updateAllMarketPrices, 2000); // On attend 2s que React s'affiche
-    setInterval(updateAllMarketPrices, 15000); 
+    setTimeout(updateMarketWithDesign, 2000);
+    setInterval(updateMarketWithDesign, 15000);
 });
 </script></body></html>
