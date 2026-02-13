@@ -1,65 +1,16 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="utf-8">
-    <link rel="icon" type="image/png" href="https://thibaults-groovy-site-af44b6.webflow.io/favicon.ico">
-    <meta name="viewport" content="width=device-width">
-    <meta name="generator" content="Astro v5.13.5">
-    <title>Market Bets</title>
-    <link rel="stylesheet" href="https://21ec25b6-1759-48f6-8405-3390f5bcf589.wf-app-prod.cosmic.webflow.services/market-bets/_astro/index.DiRS6Ng1.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Bets - Live</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
+        iframe { width: 100%; height: 100%; border: none; }
+    </style>
 </head>
-<body class="__DARK_MODE_CLASS__">
-    <style>astro-island,astro-slot,astro-static-slot{display:contents}</style>
+<body>
+    <iframe src="https://21ec25b6-1759-48f6-8405-3390f5bcf589.wf-app-prod.cosmic.webflow.services/market-bets/"></iframe>
 
-    <astro-island uid="4fW0e" 
-        component-url="https://21ec25b6-1759-48f6-8405-3390f5bcf589.wf-app-prod.cosmic.webflow.services/market-bets/_astro/TradingApp.DwG4OtXN.js" 
-        component-export="default" 
-        renderer-url="https://21ec25b6-1759-48f6-8405-3390f5bcf589.wf-app-prod.cosmic.webflow.services/market-bets/_astro/client.B-7Sgvju.js" 
-        props="{}" ssr client="only" opts='{"name":"TradingApp","value":"react"}'>
-    </astro-island>
-
-    <script>
-    async function updateMarketData() {
-        try {
-            const response = await fetch("https://api-yfinance.onrender.com/prix");
-            const data = await response.json();
-            
-            // Cible les prix
-            const elements = document.querySelectorAll('.text-xs.font-mono.mt-1');
-            
-            elements.forEach(el => {
-                const container = el.closest('div');
-                const rowText = container ? container.innerText.toUpperCase() : "";
-
-                for (const [name, info] of Object.entries(data)) {
-                    // Nettoyage des noms pour la comparaison (ignore accents et tirets)
-                    const cleanName = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
-                    const cleanRow = rowText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
-
-                    if (cleanRow.includes(cleanName)) {
-                        const priceValue = typeof info === 'object' ? info.price : info;
-                        if (priceValue > 0) {
-                            el.innerText = priceValue.toLocaleString('fr-FR') + " €";
-                            el.style.color = "#39FF14";
-                        }
-                    }
-                }
-            });
-        } catch (e) {
-            console.warn("API non disponible pour le moment");
-        }
-    }
-
-    // Lancement sécurisé
-    window.addEventListener('load', () => {
-        setTimeout(updateMarketData, 3000);
-        
-        // Surveillance des changements (pour React)
-        const observer = new MutationObserver(() => {
-            updateMarketData();
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-    });
-    </script>
-</body>
+    </body>
 </html>
