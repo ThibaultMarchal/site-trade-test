@@ -11,6 +11,42 @@
 </head>
 <body>
     <iframe src="https://21ec25b6-1759-48f6-8405-3390f5bcf589.wf-app-prod.cosmic.webflow.services/market-bets/"></iframe>
+    <script>
+async function patchIframePrices() {
+    const API_URL = "https://api-yfinance.onrender.com/prix";
+    const iframe = document.querySelector('iframe');
 
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+
+        // On essaie d'accéder au contenu de l'iFrame
+        const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+        
+        // On cherche les prix à l'intérieur de l'iFrame
+        const elements = iframeDocument.querySelectorAll('.text-xs.font-mono.mt-1');
+
+        elements.forEach(el => {
+            const container = el.closest('div');
+            const rowText = container ? container.innerText.toUpperCase() : "";
+
+            for (const [name, info] of Object.entries(data)) {
+                if (rowText.includes(name)) {
+                    const priceValue = typeof info === 'object' ? info.price : info;
+                    el.innerText = priceValue.toLocaleString('fr-FR') + " €";
+                    el.style.color = "#39FF14";
+                }
+            }
+        });
+    } catch (e) {
+        console.warn("Accès à l'iFrame bloqué par la sécurité du navigateur (CORS).");
+    }
+}
+
+// On tente de patcher une fois que l'iFrame est chargée
+document.querySelector('iframe').onload = function() {
+    setTimeout(patchIframePrices, 3000);
+};
+</script>
     </body>
 </html>
