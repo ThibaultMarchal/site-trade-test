@@ -3,6 +3,7 @@ async function synchroniserToutLeCAC40() {
     const URL_API = "https://api-yfinance.onrender.com"; // METS TON URL ICI
 
     try {
+        
         const response = await fetch(URL_API);
         const prixData = await response.json();
 
