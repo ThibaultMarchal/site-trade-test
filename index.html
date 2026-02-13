@@ -2,90 +2,41 @@
 async function updateAllMarketPrices() {
     const API_URL = "https://api-yfinance.onrender.com/prix";
 
-    try {script>
-async function updateAllMarketPrices() {
-    const API_URL = "https://api-yfinance.onrender.com/prix";
-
     try {
         const response = await fetch(API_URL);
         const data = await response.json();
         
-        // On récupère tous les blocs qui pourraient contenir une action
-        // Astro/React utilise souvent des divs imbriquées
-        const divs = document.querySelectorAll('div, span, p');
+        // On cible uniquement les blocs qui contiennent les lignes d'actions
+        // pour éviter de scanner toute la page inutilement
+        const allDivs = document.querySelectorAll('div');
 
-        divs.forEach(el => {
-            const textContent = el.innerText.trim().toUpperCase();
-            
-            // Si le texte de l'élément correspond à une de nos clés (ex: LVMH)
-            if (data[textContent]) {
-                const currentPrice = data[textContent];
-                
-                // On cherche l'élément voisin ou enfant qui contient le prix ($ ou €)
-                // On remonte au parent pour être sûr de trouver le prix à côté du nom
-                const parent = el.closest('div'); 
-                const priceElements = parent.querySelectorAll('span, div, p');
-                
-                priceElements.forEach(priceEl => {
-                    // Si l'élément contient un chiffre ou est situé après le nom
-                    if (priceEl !== el && (priceEl.innerText.includes('€') || priceEl.innerText.includes('$') || !isNaN(parseFloat(priceEl.innerText)))) {
-                        priceEl.innerText = currentPrice + " €";
-                        priceEl.style.color = "#39FF14"; // Vert néon (effet trading)
+        allDivs.forEach(container => {
+            // On cherche le nom de l'action à l'intérieur de la div
+            for (const [stockName, stockPrice] of Object.entries(data)) {
+                if (container.innerText.toUpperCase().includes(stockName)) {
+                    
+                    // Sécurité : on n'affiche le prix que s'il est réaliste
+                    if (stockPrice > 0 && stockPrice < 10000) {
+                        // On cherche l'élément qui contient le prix (souvent le dernier span ou div)
+                        const priceTarget = container.querySelector('span:last-child, .price-value');
+                        
+                        if (priceTarget && priceTarget.innerText !== stockName) {
+                            priceTarget.innerText = stockPrice.toLocaleString('fr-FR') + " €";
+                            priceTarget.style.color = "#39FF14"; // Vert néon
+                        }
                     }
-                });
+                }
             }
         });
+        console.log("Mise à jour effectuée avec succès.");
     } catch (e) {
-        console.error("Erreur de synchronisation :", e);
+        console.error("Erreur API :", e);
     }
 }
 
-// On attend que les "Astro-Islands" soient bien chargées
+// Lancement au démarrage et toutes les 15 secondes
 window.addEventListener('load', () => {
-    // Mise à jour toutes les 10 secondes pour ne pas bloquer le navigateur
-    setInterval(updateAllMarketPrices, 10000);
-    // Premier lancement après 3 secondes (temps de rendu React)
-    setTimeout(updateAllMarketPrices, 3000);
-});
-</script>
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        
-        // On récupère tous les blocs qui pourraient contenir une action
-        // Astro/React utilise souvent des divs imbriquées
-        const divs = document.querySelectorAll('div, span, p');
-
-        divs.forEach(el => {
-            const textContent = el.innerText.trim().toUpperCase();
-            
-            // Si le texte de l'élément correspond à une de nos clés (ex: LVMH)
-            if (data[textContent]) {
-                const currentPrice = data[textContent];
-                
-                // On cherche l'élément voisin ou enfant qui contient le prix ($ ou €)
-                // On remonte au parent pour être sûr de trouver le prix à côté du nom
-                const parent = el.closest('div'); 
-                const priceElements = parent.querySelectorAll('span, div, p');
-                
-                priceElements.forEach(priceEl => {
-                    // Si l'élément contient un chiffre ou est situé après le nom
-                    if (priceEl !== el && (priceEl.innerText.includes('€') || priceEl.innerText.includes('$') || !isNaN(parseFloat(priceEl.innerText)))) {
-                        priceEl.innerText = currentPrice + " €";
-                        priceEl.style.color = "#39FF14"; // Vert néon (effet trading)
-                    }
-                });
-            }
-        });
-    } catch (e) {
-        console.error("Erreur de synchronisation :", e);
-    }
-}
-
-// On attend que les "Astro-Islands" soient bien chargées
-window.addEventListener('load', () => {
-    // Mise à jour toutes les 10 secondes pour ne pas bloquer le navigateur
-    setInterval(updateAllMarketPrices, 10000);
-    // Premier lancement après 3 secondes (temps de rendu React)
-    setTimeout(updateAllMarketPrices, 3000);
+    setTimeout(updateAllMarketPrices, 2000); // On attend 2s que React s'affiche
+    setInterval(updateAllMarketPrices, 15000); 
 });
 </script></body></html>
