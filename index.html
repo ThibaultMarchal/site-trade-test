@@ -5,7 +5,7 @@ async function rafraichirPrixBourse() {
 
     try {
         const response = await fetch(URL_API);
-        if (!response.ok) throw new Error("Le serveur Python ne répond pas");
+        if (!response.ok ) throw new Error("Le serveur Python ne répond pas");
         
         const prix = await response.json();
 
